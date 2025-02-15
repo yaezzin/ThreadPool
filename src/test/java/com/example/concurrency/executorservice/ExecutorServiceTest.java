@@ -2,10 +2,9 @@ package com.example.concurrency.executorservice;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +27,7 @@ public class ExecutorServiceTest {
                 Thread.sleep(1000);
                 System.out.println(Thread.currentThread().getName());
             } catch (InterruptedException e) {
-                System.out.println(Thread.currentThread().getName() + " was interrupted");
+                System.out.println(Thread.currentThread().getName());
             }
         };
 
@@ -46,7 +45,7 @@ public class ExecutorServiceTest {
                 Thread.sleep(1000);
                 System.out.println(Thread.currentThread().getName());
             } catch (InterruptedException e) {
-                System.out.println(Thread.currentThread().getName() + " was interrupted");
+                System.out.println(Thread.currentThread().getName());
             }
         };
 
@@ -67,7 +66,7 @@ public class ExecutorServiceTest {
                 Thread.sleep(2000);
                 System.out.println(Thread.currentThread().getName());
             } catch (InterruptedException e) {
-                System.out.println(Thread.currentThread().getName() + " was interrupted");
+                System.out.println(Thread.currentThread().getName());
             }
         };
 
@@ -79,6 +78,51 @@ public class ExecutorServiceTest {
         // Waits for termination for 1 second (a timeout will occur, and it will return false).
         boolean terminated = executorService.awaitTermination(1, TimeUnit.SECONDS);
         assertFalse(terminated);
+    }
+
+    @Test
+    void submit() throws ExecutionException, InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        Runnable runnable = () -> {
+            String message = "Hello from Runnable task";
+            System.out.println(message);
+        };
+
+        Future<?> future = executorService.submit(runnable); // submit(Runnable task), submit(Runnable task, T result)
+        assertNull(future.get());
+    }
+
+    @Test
+    void invokeAll() throws InterruptedException, ExecutionException {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        List<Callable<String>> callable = Arrays.asList(
+                () -> {
+                    Thread.sleep(100);
+                    String result = "Task1";
+                    return result;
+                },
+
+                () -> {
+                    Thread.sleep(100);
+                    String result = "Task2";
+                    return result;
+                },
+
+                () -> {
+                    Thread.sleep(100);
+                    String result = "Task3";
+                    return result;
+                });
+
+        List<Future<String>> results = executorService.invokeAll(callable);
+
+        for (Future<String> result : results) {
+            System.out.println(result.get());
+        }
+
+        executorService.shutdown();
     }
 }
 
