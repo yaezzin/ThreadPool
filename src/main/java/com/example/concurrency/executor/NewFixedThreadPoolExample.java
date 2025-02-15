@@ -1,4 +1,4 @@
-package com.example.concurrency.executors;
+package com.example.concurrency.executor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
