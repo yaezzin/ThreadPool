@@ -15,6 +15,11 @@ public class ThreadPoolTaskExecutorConfig {
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(20);
+        executor.setThreadNamePrefix("Executor-");
+        executor.initialize();
+
         return executor;
     }
 
